@@ -1,8 +1,10 @@
 from src.models.connection import Connection
 from src.models.zone import Zone
 
+
 class MapError(Exception):
     pass
+
 
 class Map:
     def __init__(self):
@@ -16,7 +18,7 @@ class Map:
 def parse_meta(meta, line_num):
     zone = "normal"
     color = None
-    max_drones = 1  
+    max_drones = 1
     if meta == "":
         return zone, color, max_drones
     tags = meta.strip().split()
@@ -32,12 +34,18 @@ def parse_meta(meta, line_num):
             try:
                 max_drones = int(value)
             except ValueError:
-                raise MapError(f"line {line_num}: max_drones value '{value}' is not a valid integer")
+                raise MapError(
+                    f"line {line_num}: max_drones value "
+                    f"'{value}' is not a valid integer"
+                )
             if max_drones <= 0:
-                raise MapError(f"line {line_num}: max_drones must be a positive integer")
+                raise MapError(
+                    f"line {line_num}: max_drones must "
+                    f"be a positive integer"
+                )
         else:
             raise MapError(f"line {line_num}: unknown metadata tag '{tag}'")
-    return zone, color, max_drones 
+    return zone, color, max_drones
 
 
 def parse_first(line, start_line, line_num):
@@ -52,19 +60,31 @@ def parse_first(line, start_line, line_num):
         meta = ""
     parts = main.strip().split()
     if len(parts) < 3:
-        raise MapError(f"line {line_num}: zone requires name, x, and y (got {len(parts)} value(s))")
+        raise MapError(
+            f"line {line_num}: zone requires name, x, "
+            f"and y (got {len(parts)} value(s))"
+        )
     name = parts[0]
-    
+
     if "-" in name or " " in name:
-        raise MapError(f"line {line_num}: zone name cannot contain dashes or spaces")
+        raise MapError(
+            f"line {line_num}: zone name cannot "
+            f"contain dashes or spaces"
+        )
     try:
         x = int(parts[1])
     except ValueError:
-        raise MapError(f"line {line_num}: x coordinate '{parts[1]}' is not a valid integer")
+        raise MapError(
+            f"line {line_num}: x coordinate "
+            f"'{parts[1]}' is not a valid integer"
+        )
     try:
         y = int(parts[2])
     except ValueError:
-        raise MapError(f"line {line_num}: y coordinate '{parts[2]}' is not a valid integer")
+        raise MapError(
+            f"line {line_num}: y coordinate "
+            f"'{parts[2]}' is not a valid integer"
+        )
     zone_type, color, max_drones = parse_meta(meta, line_num)
     return Zone(name, x, y, zone_type, color, max_drones)
 
@@ -81,7 +101,10 @@ def parse_connections(line, zone_names, line_num):
         meta = ""
     parts = main.strip().split("-")
     if len(parts) != 2:
-        raise MapError(f"line {line_num}: connection must link exactly two zones (got '{main.strip()}')")
+        raise MapError(
+            f"line {line_num}: connection must link "
+            f"exactly two zones (got '{main.strip()}')"
+        )
     zone1 = parts[0].strip()
     zone2 = parts[1].strip()
     if zone1 not in zone_names:
@@ -89,7 +112,10 @@ def parse_connections(line, zone_names, line_num):
     if zone2 not in zone_names:
         raise MapError(f"line {line_num}: zone '{zone2}' is not defined")
     if zone1 == zone2:
-        raise MapError(f"line {line_num}: self-connection is not allowed ('{zone1}')")
+        raise MapError(
+            f"line {line_num}: self-connection "
+            f"is not allowed ('{zone1}')"
+        )
     max_link_capacity = 1
     if meta:
         for item in meta.strip().split():
@@ -98,13 +124,24 @@ def parse_connections(line, zone_names, line_num):
                 try:
                     max_link_capacity = int(value)
                 except ValueError:
-                    raise MapError(f"line {line_num}: max_link_capacity value '{value}' is not a valid integer")
+                    raise MapError(
+                        f"line {line_num}: "
+                        f"max_link_capacity value "
+                        f"'{value}' is not a valid "
+                        f"integer"
+                    )
                 if max_link_capacity <= 0:
-                    raise MapError(f"line {line_num}: max_link_capacity must be a positive integer")
+                    raise MapError(
+                        f"line {line_num}: "
+                        f"max_link_capacity must be a "
+                        f"positive integer"
+                    )
             else:
-                raise MapError(f"line {line_num}: unknown connection metadata tag '{item}'")
+                raise MapError(
+                    f"line {line_num}: unknown "
+                    f"connection metadata tag '{item}'"
+                )
     return Connection(zone1, zone2, max_link_capacity)
-
 
 
 def map_parsing(path):
@@ -121,50 +158,84 @@ def map_parsing(path):
                 continue
             if first_line:
                 if not line.startswith("nb_drones:"):
-                    raise MapError(f"line {line_num}: first non-comment line must be 'nb_drones: <number>'")
+                    raise MapError(
+                        f"line {line_num}: first "
+                        f"non-comment line must be "
+                        f"'nb_drones: <number>'"
+                    )
                 first_line = False
             if line.startswith("nb_drones:"):
                 value = line.removeprefix("nb_drones:").strip()
                 try:
                     number = int(value)
                 except ValueError:
-                    raise MapError(f"line {line_num}: nb_drones value '{value}' is not a valid integer")
+                    raise MapError(
+                        f"line {line_num}: nb_drones "
+                        f"value '{value}' is not a "
+                        f"valid integer"
+                    )
                 if number <= 0:
-                    raise MapError(f"line {line_num}: nb_drones must be a positive integer")
+                    raise MapError(
+                        f"line {line_num}: nb_drones "
+                        f"must be a positive integer"
+                    )
                 result.nb_drones = number
             elif line.startswith("start_hub:"):
                 start_count += 1
                 if start_count > 1:
-                    raise MapError(f"line {line_num}: there must be only one start_hub")
+                    raise MapError(
+                        f"line {line_num}: there must "
+                        f"be only one start_hub"
+                    )
                 zone = parse_first(line, "start_hub:", line_num)
                 if zone.name in zone_names:
-                    raise MapError(f"line {line_num}: duplicate zone name '{zone.name}'")
+                    raise MapError(
+                        f"line {line_num}: duplicate "
+                        f"zone name '{zone.name}'"
+                    )
                 zone_names.add(zone.name)
                 result.start_hub = zone
             elif line.startswith("end_hub:"):
                 end_count += 1
                 if end_count > 1:
-                    raise MapError(f"line {line_num}: there must be only one end_hub")
+                    raise MapError(
+                        f"line {line_num}: there must "
+                        f"be only one end_hub"
+                    )
                 zone = parse_first(line, "end_hub:", line_num)
                 if zone.name in zone_names:
-                    raise MapError(f"line {line_num}: duplicate zone name '{zone.name}'")
+                    raise MapError(
+                        f"line {line_num}: duplicate "
+                        f"zone name '{zone.name}'"
+                    )
                 zone_names.add(zone.name)
                 result.end_hub = zone
             elif line.startswith("hub:"):
                 zone = parse_first(line, "hub:", line_num)
                 if zone.name in zone_names:
-                    raise MapError(f"line {line_num}: duplicate zone name '{zone.name}'")
+                    raise MapError(
+                        f"line {line_num}: duplicate "
+                        f"zone name '{zone.name}'"
+                    )
                 zone_names.add(zone.name)
                 result.hubs.append(zone)
             elif line.startswith("connection:"):
                 connection = parse_connections(line, zone_names, line_num)
                 pair = frozenset({connection.zone1, connection.zone2})
                 if pair in connections_seen:
-                    raise MapError(f"line {line_num}: duplicate connection '{connection.zone1}-{connection.zone2}'")
+                    raise MapError(
+                        f"line {line_num}: duplicate "
+                        f"connection "
+                        f"'{connection.zone1}"
+                        f"-{connection.zone2}'"
+                    )
                 connections_seen.add(pair)
                 result.connections.append(connection)
             else:
-                raise MapError(f"line {line_num}: unrecognized syntax '{line}'")
+                raise MapError(
+                    f"line {line_num}: unrecognized "
+                    f"syntax '{line}'"
+                )
     if result.start_hub is None:
         raise MapError("missing start_hub definition")
     if result.end_hub is None:

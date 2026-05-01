@@ -1,14 +1,13 @@
 import sys
 from src.parser.map_parser import map_parsing, MapError
 from src.models.graph import Graph
-from src.pathfinding.algorithm import *
-from src.simulation.engine import *
+from src.simulation.engine import create_drones, run_simulation
 from src.visualization.renderer import PygameVisualizer
 
 if __name__ == "__main__":
 
     if len(sys.argv) > 1:
-            map_path = sys.argv[1]
+        map_path = sys.argv[1]
     else:
         print("Error: Please provide a map path.")
         sys.exit(1)
