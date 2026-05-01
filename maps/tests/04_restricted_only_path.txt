@@ -1,0 +1,11 @@
+# Test: Only path goes through restricted zones (cost 2 each)
+nb_drones: 2
+start_hub: origin 0 0 [color=green]
+hub: r1 1 0 [zone=restricted color=red]
+hub: r2 2 0 [zone=restricted color=red]
+hub: r3 3 0 [zone=restricted color=red]
+end_hub: dest 4 0 [color=green]
+connection: origin-r1
+connection: r1-r2
+connection: r2-r3
+connection: r3-dest

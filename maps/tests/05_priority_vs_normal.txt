@@ -1,0 +1,24 @@
+# Test: Priority path vs normal path — priority should be preferred
+nb_drones: 2
+start_hub: start 0 0 [color=green max_drones=2]
+
+# Normal path (longer)
+hub: n1 1 1 [color=blue]
+hub: n2 2 1 [color=blue]
+hub: n3 3 1 [color=blue]
+
+# Priority path (same length but preferred)
+hub: p1 1 -1 [zone=priority color=cyan]
+hub: p2 2 -1 [zone=priority color=cyan]
+hub: p3 3 -1 [zone=priority color=cyan]
+
+end_hub: goal 4 0 [color=green max_drones=2]
+
+connection: start-n1
+connection: n1-n2
+connection: n2-n3
+connection: n3-goal
+connection: start-p1
+connection: p1-p2
+connection: p2-p3
+connection: p3-goal

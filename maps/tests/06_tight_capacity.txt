@@ -1,0 +1,7 @@
+# Test: Tight capacity — bottleneck forces drone queuing
+nb_drones: 4
+start_hub: start 0 0 [color=green max_drones=4]
+hub: bottleneck 1 0 [color=orange max_drones=1]
+end_hub: goal 2 0 [color=green max_drones=4]
+connection: start-bottleneck [max_link_capacity=1]
+connection: bottleneck-goal [max_link_capacity=1]

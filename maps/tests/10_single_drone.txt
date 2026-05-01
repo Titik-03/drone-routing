@@ -1,0 +1,7 @@
+# Test: Single drone — simplest simulation case
+nb_drones: 1
+start_hub: home 0 0 [color=green]
+hub: mid 1 0 [color=blue]
+end_hub: target 2 0 [color=red]
+connection: home-mid
+connection: mid-target

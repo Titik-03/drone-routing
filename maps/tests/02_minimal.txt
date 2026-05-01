@@ -1,0 +1,5 @@
+# Test: Minimal valid map — just start, end, one connection
+nb_drones: 1
+start_hub: S 0 0
+end_hub: E 1 0
+connection: S-E

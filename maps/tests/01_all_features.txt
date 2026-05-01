@@ -1,0 +1,40 @@
+# Test: All parser features combined
+# - All zone types (normal, blocked, restricted, priority)
+# - Colors, max_drones, max_link_capacity
+# - Metadata in different orders
+# - Comments and blank lines throughout
+
+nb_drones: 3
+
+start_hub: start 0 0 [color=green max_drones=3]
+
+# Normal zone (explicit)
+hub: normal_zone 1 0 [zone=normal color=blue]
+
+# Blocked zone — should be avoided by pathfinding
+hub: wall 1 1 [zone=blocked color=gray]
+
+# Restricted zone — costs 2 turns
+hub: danger 2 1 [zone=restricted color=red max_drones=2]
+
+# Priority zone — costs 1 turn but preferred
+hub: fast_lane 2 0 [zone=priority color=cyan]
+
+# Metadata in reversed order
+hub: mixed_meta 3 0 [max_drones=2 color=yellow zone=normal]
+
+# No metadata at all
+hub: plain 3 1
+
+end_hub: goal 4 0 [color=green max_drones=3]
+
+# Connections with and without capacity
+connection: start-normal_zone
+connection: normal_zone-fast_lane [max_link_capacity=2]
+connection: fast_lane-mixed_meta
+connection: mixed_meta-goal
+connection: start-danger
+connection: danger-plain
+connection: plain-goal
+connection: normal_zone-wall
+connection: wall-danger

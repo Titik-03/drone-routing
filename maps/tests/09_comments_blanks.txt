@@ -1,0 +1,24 @@
+# Test: Heavy comments and blank lines everywhere
+# This tests that comments and blanks are properly ignored
+
+# Comment before nb_drones
+nb_drones: 1
+
+# Comment between sections
+
+
+start_hub: A 0 0
+# Inline section comment
+
+hub: B 1 0
+
+# Another comment
+end_hub: C 2 0
+
+
+# Connections section
+connection: A-B
+# Between connections
+connection: B-C
+
+# End of file comment

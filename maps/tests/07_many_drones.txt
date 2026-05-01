@@ -1,0 +1,23 @@
+# Test: Many drones with multiple parallel paths
+nb_drones: 10
+start_hub: start 0 0 [color=green max_drones=10]
+
+hub: pathA 1 1 [color=blue max_drones=3]
+hub: pathB 1 0 [color=cyan max_drones=3]
+hub: pathC 1 -1 [color=yellow max_drones=3]
+
+hub: mergeA 2 1 [color=blue max_drones=3]
+hub: mergeB 2 0 [color=cyan max_drones=3]
+hub: mergeC 2 -1 [color=yellow max_drones=3]
+
+end_hub: goal 3 0 [color=green max_drones=10]
+
+connection: start-pathA
+connection: start-pathB
+connection: start-pathC
+connection: pathA-mergeA
+connection: pathB-mergeB
+connection: pathC-mergeC
+connection: mergeA-goal
+connection: mergeB-goal
+connection: mergeC-goal

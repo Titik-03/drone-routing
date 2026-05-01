@@ -1,0 +1,9 @@
+# Test: No metadata on any zone or connection
+nb_drones: 2
+start_hub: alpha 0 0
+hub: beta 1 0
+hub: gamma 2 0
+end_hub: delta 3 0
+connection: alpha-beta
+connection: beta-gamma
+connection: gamma-delta
