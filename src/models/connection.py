@@ -1,5 +1,9 @@
 class Connection:
-    def __init__(self, zone1, zone2, max_link_capacity=1):
-        self.zone1 = zone1
-        self.zone2 = zone2
-        self.max_link_capacity = max_link_capacity
+    """"show a link between two zones"""
+
+    def __init__(
+        self, zone1: str, zone2: str, max_link_capacity: int = 1
+    ) -> None:
+        self.zone1: str = zone1
+        self.zone2: str = zone2
+        self.max_link_capacity: int = max_link_capacity

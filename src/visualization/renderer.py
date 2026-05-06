@@ -1,25 +1,32 @@
+from typing import Tuple, List, Optional
 from src.simulation.engine import get_next_zone
+from src.models.graph import Graph
+from src.models.drone import Drone
 import pygame
 import sys
 
 
 class Config:
-    WIDTH, HEIGHT = 1000, 1000
-    SCALE = 80
-    OFFSET_X = 100
-    OFFSET_Y = 300
-    RADIUS = 25
+    """a class to set pygame needed data"""
+    WIDTH: int = 1000
+    HEIGHT: int = 1000
+    SCALE: int = 80
+    OFFSET_X: int = 100
+    OFFSET_Y: int = 300
+    RADIUS: int = 25
 
 
 class Colors:
-    BG = (30, 30, 30)
-    ZONE = (100, 100, 100)
-    RED = (220, 50, 50)
-    GREEN = (50, 220, 50)
-    WHITE = (255, 255, 255)
+    """sets the colors to be easy to use"""
+    BG: Tuple[int, int, int] = (30, 30, 30)
+    ZONE: Tuple[int, int, int] = (100, 100, 100)
+    RED: Tuple[int, int, int] = (220, 50, 50)
+    GREEN: Tuple[int, int, int] = (50, 220, 50)
+    WHITE: Tuple[int, int, int] = (255, 255, 255)
 
     @staticmethod
-    def get_color(color_name):
+    def get_color(color_name: Optional[str]) -> Tuple[int, int, int]:
+        """this adds extra colors to be ready to use"""
         if color_name == "red":
             return Colors.RED
         elif color_name == "green":
@@ -53,64 +60,83 @@ class Colors:
 
 
 class PygameVisualizer:
-    def __init__(self, graph):
+    """this is the main rendering class"""
+    def __init__(self, graph: Graph) -> None:
         pygame.init()
-        self.graph = graph
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.graph: Graph = graph
+        self.screen: pygame.Surface = pygame.display.set_mode(
+            (0, 0), pygame.FULLSCREEN
+        )
         Config.WIDTH, Config.HEIGHT = self.screen.get_size()
         pygame.display.set_caption("Fly-in Simulation")
         Config.OFFSET_X, Config.OFFSET_Y = (
             Config.WIDTH // 15, Config.HEIGHT // 2
         )
 
-    def check_events(self):
+    def check_events(self) -> None:
+        """this checks if an exit input is entered to stop pygame"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
-    def draw_zone(self, x, y, color, name=""):
-        xcer = x * Config.SCALE + Config.OFFSET_X
-        ycer = y * Config.SCALE + Config.OFFSET_Y
-        pos = (xcer, ycer)
+    def draw_zone(
+        self, x: float, y: float, color: Tuple[int, int, int], name: str = ""
+    ) -> None:
+        """this draw a zone and its label"""
+        xcer: float = x * Config.SCALE + Config.OFFSET_X
+        ycer: float = y * Config.SCALE + Config.OFFSET_Y
+        pos: Tuple[float, float] = (xcer, ycer)
 
         pygame.draw.circle(self.screen, color, pos, Config.RADIUS)
         pygame.draw.circle(self.screen, Colors.WHITE, pos, Config.RADIUS, 2)
 
         if name:
-            font = pygame.font.SysFont("consolas", 12, bold=True)
-            label = font.render(name, True, Colors.WHITE)
+            font: pygame.font.Font = pygame.font.SysFont(
+                "consolas", 12, bold=True
+            )
+            label: pygame.Surface = font.render(name, True, Colors.WHITE)
             self.screen.blit(
                 label,
                 (xcer - label.get_width() // 2,
                  ycer + Config.RADIUS + 5)
             )
 
-    def draw_connection(self, x1, y1, x2, y2, color):
-        start_x = x1 * Config.SCALE + Config.OFFSET_X
-        start_y = y1 * Config.SCALE + Config.OFFSET_Y
-        pos_s = start_x, start_y
+    def draw_connection(
+        self,
+        x1: float,
+        y1: float,
+        x2: float,
+        y2: float,
+        color: Tuple[int, int, int]
+    ) -> None:
+        """this draw a connection"""
+        start_x: float = x1 * Config.SCALE + Config.OFFSET_X
+        start_y: float = y1 * Config.SCALE + Config.OFFSET_Y
+        pos_s: Tuple[float, float] = start_x, start_y
 
-        end_x = x2 * Config.SCALE + Config.OFFSET_X
-        end_y = y2 * Config.SCALE + Config.OFFSET_Y
-        pos_e = end_x, end_y
+        end_x: float = x2 * Config.SCALE + Config.OFFSET_X
+        end_y: float = y2 * Config.SCALE + Config.OFFSET_Y
+        pos_e: Tuple[float, float] = end_x, end_y
 
         pygame.draw.line(self.screen, color, pos_s, pos_e, 4)
 
-    def draw_drone(self, x, y, drone_id):
-        xcer = x * Config.SCALE + Config.OFFSET_X
-        ycer = y * Config.SCALE + Config.OFFSET_Y
-        pos = (xcer, ycer)
+    def draw_drone(self, x: float, y: float, drone_id: int) -> None:
+        """this draw a drone"""
+        xcer: float = x * Config.SCALE + Config.OFFSET_X
+        ycer: float = y * Config.SCALE + Config.OFFSET_Y
+        pos: Tuple[float, float] = (xcer, ycer)
         pygame.draw.circle(self.screen, Colors.WHITE, pos, Config.RADIUS // 2)
-        font = pygame.font.SysFont("consolas", 9, bold=True)
-        label = font.render(drone_id, True, (30, 30, 30))
+        font: pygame.font.Font = pygame.font.SysFont("consolas", 9, bold=True)
+        label: pygame.Surface = font.render(str(drone_id), True, (30, 30, 30))
         self.screen.blit(
             label,
             (pos[0] - label.get_width() // 2,
              pos[1] - label.get_height() // 2)
         )
 
-    def draw_turn(self, turn, drones):
+    def draw_turn(self, turn: int, drones: List[Drone]) -> None:
+        """this draw the full screen with all its component (drones ...)"""
         self.screen.fill(Colors.BG)
 
         for conn in self.graph.map.connections:
