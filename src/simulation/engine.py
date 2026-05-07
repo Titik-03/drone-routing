@@ -62,6 +62,18 @@ def is_connection(
     conn_name: Tuple[str, str] = (sorted_zones[0], sorted_zones[1])
     in_use: int = usage.get(conn_name, 0)
     return bool(in_use < nb_c)
+
+
+def find_connection_name(
+    z1: str, z2: str, graph: Graph
+) -> str:
+    """return the connection name as defined in the map file"""
+    for c in graph.map.connections:
+        if c.zone1 == z1 and c.zone2 == z2:
+            return f"{c.zone1}-{c.zone2}"
+        if c.zone2 == z1 and c.zone1 == z2:
+            return f"{c.zone1}-{c.zone2}"
+    return f"{z1}-{z2}"
 # def is_connection(z1, z2, graph, usage):
 #     nb_c = 1
 #     for c in graph.map.connections:
@@ -104,6 +116,7 @@ def run_simulation(
                 d.step += 1
                 d.current_zone = d.path[d.step]
                 just_arrived.add(d.id)
+                turn_output.append(f"{d.id}-{d.current_zone}")
                 if d.current_zone == graph.end.name:
                     d.arrived = True
 
@@ -121,11 +134,16 @@ def run_simulation(
                 next_zone = graph.zones[next_z_name]
                 if next_zone.zone_type == "restricted":
                     d.in_transit = True
+                    conn_label: str = find_connection_name(
+                        current_z_name, next_z_name, graph
+                    )
+                    turn_output.append(f"{d.id}-{conn_label}")
                 else:
                     d.step += 1
                     d.current_zone = d.path[d.step]
                     if d.current_zone == graph.end.name:
                         d.arrived = True
+                    turn_output.append(f"{d.id}-{d.current_zone}")
 
                 sorted_zones2 = sorted([current_z_name, next_z_name])
                 conn_name_2: Tuple[str, str] = (
@@ -133,7 +151,6 @@ def run_simulation(
                 )
 
                 usage[conn_name_2] = usage.get(conn_name_2, 0) + 1
-                turn_output.append(f"{d.id}-{next_z_name}")
         if turn_output:
             print(" ".join(turn_output))
 

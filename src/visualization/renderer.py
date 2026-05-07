@@ -65,7 +65,7 @@ class PygameVisualizer:
         pygame.init()
         self.graph: Graph = graph
         self.screen: pygame.Surface = pygame.display.set_mode(
-            (0, 0), pygame.FULLSCREEN
+            (0, 0)
         )
         Config.WIDTH, Config.HEIGHT = self.screen.get_size()
         pygame.display.set_caption("Fly-in Simulation")
