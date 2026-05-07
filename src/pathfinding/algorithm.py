@@ -1,5 +1,5 @@
 from collections import deque
-from typing import List, Dict
+from typing import List, Dict, Deque
 from src.models.graph import Graph
 
 
@@ -8,7 +8,7 @@ def find_all(graph: Graph) -> List[List[str]]:
     start_name: str = graph.start.name
     end_name: str = graph.end.name
     all_paths: List[List[str]] = []
-    queue: deque = deque([[start_name]])
+    queue: Deque[List[str]] = deque([[start_name]])
     while queue:
         current_path: List[str] = queue.popleft()
         current: str = current_path[-1]
